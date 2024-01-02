@@ -5,6 +5,7 @@ import { IsEmail, IsNotEmpty, IsString, IsMobilePhone, IsDateString, IsEnum } fr
 export class LoginDto {
   @ApiProperty()
   @IsEmail()
+  @IsNotEmpty()
   email: string;
 
   @ApiProperty()

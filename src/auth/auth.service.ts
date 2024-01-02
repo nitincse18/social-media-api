@@ -1,12 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { SignupDto } from './dto/signup.dto';
-import * as bcrypt from 'bcrypt';
+import  bcrypt, { compare } from 'bcrypt';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
+
 
 @Injectable()
 export class AuthService {
@@ -19,9 +20,9 @@ export class AuthService {
   ) {}
 
   async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userService.findByEmail(email);
-    console.log('user', user)
-    if (user && (await bcrypt.compare(password, user.password))) {
+    const user = await this.userRepository.findOne({where: {email: email}})
+
+    if (user && (await compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
     }
@@ -32,6 +33,7 @@ export class AuthService {
   async signup(user: SignupDto): Promise<UserEntity> {
     try {
       const newUser = this.userRepository.create(user);
+      newUser.createdBy = user.email
       return await this.userRepository.save(newUser);
     } catch (error) {
         console.log(error)
@@ -40,13 +42,19 @@ export class AuthService {
 
   async login(loginDto: LoginDto) {
     try {
-        const user = await this.userService.findByEmail(loginDto.email)
-        const payload = { sub: user.id, email: user.email };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+        const validatedUser = await this.validateUser(loginDto.email, loginDto.password);
+        delete validatedUser.password;
+        if(validatedUser) {
+          const accessToken =await this.jwtService.sign(validatedUser);
+          validatedUser.token = accessToken
+          return validatedUser;
+        }else{
+          throw new HttpException('Invalid User Credentials', HttpStatus.BAD_REQUEST);
+        }
+    
   }catch (error) {
     console.log(error)
+    throw new HttpException(error.message, error.status)
   }
   }
 }

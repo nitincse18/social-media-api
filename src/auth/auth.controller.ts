@@ -12,7 +12,7 @@ export class AuthController {
         private readonly authService: AuthService
     ){ }
 
-    @Post('singup')
+    @Post('signup')
     async signup(@Body() signUpDto: SignupDto){
         return this.authService.signup(signUpDto)
     }
@@ -20,13 +20,12 @@ export class AuthController {
     
     @Post('login')
     async login(@Body() loginDto: LoginDto){
-        console.log(loginDto)
         return this.authService.login(loginDto)
     }
 
     @UseGuards(JwtAuthGuard)
     @Get('logout')
     async logout() {
-
+        return {message: 'User logged-out'}
     }
 }
