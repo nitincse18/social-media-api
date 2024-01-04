@@ -4,7 +4,7 @@ import { PostsService } from './posts.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostEntity } from './entities/post.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
-import { AwsService } from 'src/config/aws.config';
+import { AwsService } from '../../config/aws.config';
 import { CommentEntity } from './entities/comment.entity';
 
 @Module({

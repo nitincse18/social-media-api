@@ -46,5 +46,11 @@ export class UserEntity extends BaseEntity {
     
     @OneToMany(() => CommentEntity, (comment) => comment.user)
     comments: CommentEntity[];
+
+    // @Column({type: ''})
+    // photos: string[]
+
+    @Column({ default: '' })
+    cover_image: string
 }
 

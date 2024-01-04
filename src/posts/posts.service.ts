@@ -5,7 +5,7 @@ import { PostEntity } from './entities/post.entity';
 import { UserEntity } from 'src/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { AwsService } from 'src/config/aws.config';
+import { AwsService } from '../../config/aws.config';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentEntity } from './entities/comment.entity';
 
